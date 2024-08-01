@@ -1,0 +1,46 @@
+local fps = 60
+local maxFPSToSubtract = 30
+local realistic = false
+local constant = false
+
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
+local w = library:CreateWindow("Flex Your FPS")
+local b = w:CreateFolder("FPS Modifier")
+
+b:Toggle("Realistic FPS",function(bool)
+    realistic = bool
+end)
+
+b:Toggle("Constant FPS",function(bool)
+    constant = bool
+end)
+
+b:Box("FPS","number",function(value)
+    fps = value
+end)
+
+b:Box("Realistic FPS Size","number",function(value)
+    maxFPSToSubtract = value
+end)
+
+
+local function getFPS()
+    if constant then 
+        return math.max(math.min(fps, 1500), 1), nil, 1 
+    elseif realistic then 
+        return math.max(math.min(fps - math.random(0, maxFPSToSubtract), 1500), 1), nil, 1
+    end
+end
+
+for i,v in pairs(getgc()) do
+    if type(v) == "function" and getfenv(v).script == (game:GetService("Players").LocalPlayer.PlayerScripts.fps_recorder) then
+        if debug.getinfo(v).numparams == 3 then
+            hookfunction(v, function() 
+                return getFPS()
+            end)
+        end
+    end
+end
+
+
+
