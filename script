@@ -1,4 +1,4 @@
-if not hookfunction then warn("Your exploit does not support hookfunction") else
+if not hookfunction then error("Your exploit does not support hookfunction") end
 
 local fps = 60
 local maxFPSToSubtract = 30
@@ -42,7 +42,5 @@ for i,v in pairs(getgc()) do
             end)
         end
     end
-end
-
 end
 
