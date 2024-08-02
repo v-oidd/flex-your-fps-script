@@ -1,4 +1,4 @@
-if not hookfunction then print("Your exploit does not support hookfunction") else
+if not hookfunction then warn("Your exploit does not support hookfunction") else
 
 local fps = 60
 local maxFPSToSubtract = 30
