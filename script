@@ -35,7 +35,7 @@ local function getFPS()
 end
 
 for i,v in pairs(getgc()) do
-    if type(v) == "function" and getfenv(v).script == (game:GetService("Players").LocalPlayer.PlayerScripts.fps_recorder) then
+    if type(v) == "function" and getfenv(v).script == game:GetService("Players").LocalPlayer.PlayerScripts.fps_recorder then
         if debug.getinfo(v).numparams == 3 then
             hookfunction(v, function() 
                 return getFPS()
