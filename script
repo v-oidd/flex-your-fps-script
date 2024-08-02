@@ -21,7 +21,7 @@ b:Box("FPS","number",function(value)
     fps = value
 end)
 
-b:Box("Realistic FPS Buffer","number",function(value)
+b:Box("Realistic FPS Range","number",function(value)
     maxFPSToSubtract = value
 end)
 
