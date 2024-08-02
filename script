@@ -1,33 +1,48 @@
 if not hookfunction then error("Your exploit does not support hookfunction") end
 
+local players = game:GetService("Players")
+
 local fps = 60
 local maxFPSToSubtract = 30
 local realistic = false
 local constant = false
+local copyFPS = false
+local targetName = nil
 
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local w = library:CreateWindow("Flex Your FPS")
 local b = w:CreateFolder("FPS Modifier")
+local c = w:CreateFolder("FPS Copier")
 
-b:Toggle("Realistic FPS",function(bool)
+b:Toggle("Realistic FPS", function(bool)
     realistic = bool
 end)
 
-b:Toggle("Constant FPS",function(bool)
+b:Toggle("Constant FPS", function(bool)
     constant = bool
 end)
 
-b:Box("FPS","number",function(value)
+b:Box("FPS", "number", function(value)
     fps = value
 end)
 
-b:Box("Realistic FPS Range","number",function(value)
+b:Box("Realistic FPS Range", "number", function(value)
     maxFPSToSubtract = value
+end)
+
+c:Toggle("Copy FPS", function(bool)
+    copyFPS = bool 
+end)
+
+local dropdown = c:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
+    targetName = plrName
 end)
 
 
 local function getFPS()
-    if constant then 
+    if copyFPS then 
+        return tonumber(workspace[targetName].Head.fpsGui.FPS.Text:sub(6,-1))
+    elseif constant then 
         return math.max(math.min(fps, 1500), 1), nil, 1 
     elseif realistic then 
         return math.max(math.min(fps, 1500), 1) - math.random(0, maxFPSToSubtract), nil, 1
@@ -35,7 +50,7 @@ local function getFPS()
 end
 
 for i,v in pairs(getgc()) do
-    if type(v) == "function" and getfenv(v).script == game:GetService("Players").LocalPlayer.PlayerScripts.fps_recorder then
+    if type(v) == "function" and getfenv(v).script == players.LocalPlayer.PlayerScripts.fps_recorder then
         if debug.getinfo(v).numparams == 3 then
             hookfunction(v, function() 
                 return getFPS()
@@ -44,3 +59,10 @@ for i,v in pairs(getgc()) do
     end
 end
 
+players.PlayerAdded:Connect(function()
+    dropdown:Refresh(players:GetPlayers())
+end)
+
+players.PlayerRemoving:Connect(function()
+    dropdown:Refresh(players:GetPlayers())
+end)
