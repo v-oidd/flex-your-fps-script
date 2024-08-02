@@ -30,7 +30,7 @@ local function getFPS()
     if constant then 
         return math.max(math.min(fps, 1500), 1), nil, 1 
     elseif realistic then 
-        return math.max(math.min(fps - math.random(0, maxFPSToSubtract), 1500), 1), nil, 1
+        return math.max(math.min(fps, 1500), 1) - math.random(0, maxFPSToSubtract), nil, 1
     end
 end
 
