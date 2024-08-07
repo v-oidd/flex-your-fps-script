@@ -1,3 +1,5 @@
+-- to achieve 0 fps, turn off all options and reset your character
+
 if not hookfunction then error("Your exploit does not support hookfunction") end
 
 local players = game:GetService("Players")
@@ -47,6 +49,7 @@ local function getFPS()
     elseif realistic then 
         return math.max(math.min(fps, 1500), 1) - math.random(0, maxFPSToSubtract), nil, 1
     end
+    return nil
 end
 
 for i,v in pairs(getgc()) do
