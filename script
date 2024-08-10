@@ -1,11 +1,11 @@
--- to achieve 0 fps, turn off all options and reset your character
+-- To achieve 0 FPS, turn off all options and then reset your character
 
 if not hookfunction then error("Your exploit does not support hookfunction") end
 
 local players = game:GetService("Players")
 
 local fps = 60
-local maxFPSToSubtract = 30
+local maxFPSToSubtract = 10
 local realistic = false
 local constant = false
 local copyFPS = false
@@ -53,7 +53,7 @@ local function getFPS()
 end
 
 for i,v in pairs(getgc()) do
-    if type(v) == "function" and getfenv(v).script == players.LocalPlayer.PlayerScripts.fps_recorder then
+    if type(v) == "function" and getfenv(v).script == players.LocalPlayer.PlayerScripts.LocalScript then
         if debug.getinfo(v).numparams == 3 then
             hookfunction(v, function() 
                 return getFPS()
