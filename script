@@ -45,9 +45,9 @@ local function getFPS()
     if copyFPS then 
         return tonumber(workspace[targetName].Head.fpsGui.FPS.Text:sub(6,-1))
     elseif constant then 
-        return math.max(math.min(fps, 1500), 1), nil, 1 
+        return math.max(math.min(fps, 1500), 1)
     elseif realistic then 
-        return math.max(math.min(fps, 1500), 1) - math.random(0, maxFPSToSubtract), nil, 1
+        return math.max(math.min(fps, 1500), 1) - math.random(0, maxFPSToSubtract)
     end
     return nil
 end
