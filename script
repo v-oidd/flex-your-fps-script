@@ -1,5 +1,3 @@
--- To achieve 0 FPS, turn off all options and then reset your character
-
 if not hookfunction then error("Your exploit does not support hookfunction") end
 
 local players = game:GetService("Players")
