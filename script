@@ -1,4 +1,19 @@
-if not hookfunction then error("Your exploit does not support hookfunction") end
+if not hookfunction then
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+    	Title = "Error",
+    	Text = "Your exploit does not support hookfunction",
+    	Icon = "rbxassetid://18911855792",
+    	Duration = 5
+    })
+    error("Your exploit does not support hookfunction")
+end
+
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "made by .void__",
+	Text = "Successfully executed",
+	Icon = "rbxassetid://18911834990",
+	Duration = 3
+}) 
 
 local players = game:GetService("Players")
 
