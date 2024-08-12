@@ -70,7 +70,7 @@ local settings = {
             on = false,
             min = -2^62,
             max = 2^62,
-            decimals = true
+            noDecimals = false
         }
     }
 }
@@ -180,7 +180,7 @@ local function loadPingUI()
     end)
     
     f:Toggle("No decimals", function(bool)
-        settings.ping.chaos.decimals = bool
+        settings.ping.chaos.noDecimals = bool
     end)
     
     f:Box("Minimum Ping", "string", function(value)
@@ -244,10 +244,10 @@ coroutine.wrap(function()
         if settings.ping.chaos.on then 
             chaosMin = settings.ping.chaos.min
             chaosMax = settings.ping.chaos.max
-            if settings.ping.chaos.decimals then
-                pingRemote:FireServer(random:NextNumber(chaosMin, chaosMax))
-            else 
+            if settings.ping.chaos.noDecimals then
                 pingRemote:FireServer(random:NextInteger(chaosMin, chaosMax))
+            else 
+                pingRemote:FireServer(random:NextNumber(chaosMin, chaosMax))
             end
         elseif settings.ping.copy then
             if workspace:FindFirstChild(settings.ping.targetName) then
