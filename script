@@ -13,11 +13,18 @@ if not (hookfunction or hookmetamethod) then
     error("Your exploit does not support hookfunction or hookmetamethod")
 end
 
+game:GetService("StarterGui"):SetCore("SendNotification",{
+    Title = "GUI loaded",
+    Text = "made by .void__",
+    Icon = "rbxassetid://18911834990",
+    Duration = 5
+})
+
 if not hookfunction then 
     game:GetService("StarterGui"):SetCore("SendNotification",{
         Title = "FPS UI was not loaded",
         Text = "Your exploit does not support hookfunction",
-        Icon = "rbxassetid://18911834990",
+        Icon = "rbxassetid://18911855792",
         Duration = 5
     }) 
 end
@@ -26,13 +33,13 @@ if not hookmetamethod then
     game:GetService("StarterGui"):SetCore("SendNotification",{
         Title = "Ping UI was not loaded",
         Text = "Your exploit does not support hookmetamethod",
-        Icon = "rbxassetid://18911834990",
+        Icon = "rbxassetid://18911855792",
         Duration = 5
     })
 else 
     game:GetService("StarterGui"):SetCore("SendNotification",{
         Title = "Enter \"inf\" for infinite ping",
-        Text = "made by .void__",
+        Text = "(without the quotation marks)",
         Icon = "rbxassetid://18911834990",
         Duration = 5
     }) 
