@@ -56,7 +56,8 @@ local settings = {
         copy = false,
         targetName = nil,
         min = 1,
-        max = 2500
+        max = 2500,
+        placeholder = false
     },
     ping = {
         value = 60,
@@ -66,11 +67,15 @@ local settings = {
         copy = false,
         targetName = nil,
         min = -math.huge,
-        max = math.huge
+        max = math.huge,
+        placeholder = false
     }
 }
 
 local function getValue(valueType)
+    if settings[valueType].placeholder then 
+        return nil 
+    end
     if settings[valueType].copy then 
         if valueType == "fps" then
             return tonumber(workspace[settings[valueType].targetName].Head.fpsGui.FPS.Text:sub(6,-1))
@@ -100,6 +105,13 @@ local function loadFPSUI()
         settings.fps.constant = bool
     end)
     
+    b:Toggle("0 FPS (will reset you)", function(bool)
+        settings.fps.placeholder = bool
+        if settings.fps.placeholder then 
+            players.LocalPlayer.Character.Humanoid.Health = 0 
+        end
+    end)
+    
     b:Box("FPS", "number", function(value)
         settings.fps.value = value
     end)
@@ -127,6 +139,13 @@ local function loadPingUI()
     
     d:Toggle("Constant Ping", function(bool)
         settings.ping.constant = bool
+    end)
+
+    d:Toggle("Placeholder ping (will reset you)", function(bool)
+        settings.ping.placeholder = bool
+        if settings.ping.placeholder then 
+            players.LocalPlayer.Character.Humanoid.Health = 0 
+        end
     end)
     
     d:Box("Ping", "string", function(value)
