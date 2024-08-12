@@ -41,11 +41,10 @@ if not hookmetamethod then
     })
 else 
     game:GetService("StarterGui"):SetCore("SendNotification",{
-        Title = "Enter \"inf\" for infinite ping",
+        Title = "Enter \"inf\" into the Ping UI for infinite ping",
         Text = "(without the quotation marks)",
-        Icon = "rbxassetid://18911834990",
         Duration = 5
-    }) 
+    })
 end
 
 local settings = {
