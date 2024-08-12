@@ -1,3 +1,5 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua"))()
+
 local players = game:GetService("Players")
 local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
 local fpsDropdown 
