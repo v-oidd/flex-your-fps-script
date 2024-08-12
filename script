@@ -141,7 +141,7 @@ local function loadPingUI()
         settings.ping.constant = bool
     end)
 
-    d:Toggle("Placeholder ping (will reset you)", function(bool)
+    d:Toggle("Placeholder Ping (will reset you)", function(bool)
         settings.ping.placeholder = bool
         if settings.ping.placeholder then 
             players.LocalPlayer.Character.Humanoid.Health = 0 
