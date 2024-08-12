@@ -179,7 +179,7 @@ local function loadPingUI()
         settings.ping.chaos.on = bool
     end)
     
-    f:Toggle("No decimals", function(bool)
+    f:Toggle("No Decimals", function(bool)
         settings.ping.chaos.noDecimals = bool
     end)
     
