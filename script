@@ -1,4 +1,6 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua"))()
+if hookmetamethod then 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua"))()
+end 
 
 local players = game:GetService("Players")
 local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
@@ -12,8 +14,7 @@ if not (hookfunction or hookmetamethod) then
         Icon = "rbxassetid://18911855792",
         Duration = 5
     })
-    error("Your exploit does not support hookfunction or hookmetamethod")
-end
+else
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
     Title = "GUI loaded",
@@ -202,3 +203,5 @@ players.PlayerRemoving:Connect(function()
         pingDropdown:Refresh(players:GetPlayers())
     end
 end)
+
+end
