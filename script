@@ -8,7 +8,7 @@ local random = Random.new()
 local fpsDropdown 
 local pingDropdown
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-local w = library:CreateWindow("Flex Your FPS")
+local w = library:CreateWindow("Flexer")
 
 if not (hookfunction or hookmetamethod) then
     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -20,7 +20,7 @@ if not (hookfunction or hookmetamethod) then
 else
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
-    Title = "GUI loaded",
+    Title = "Flexer loaded",
     Text = "Created by .void__",
     Icon = "rbxassetid://18911834990",
     Duration = 5
