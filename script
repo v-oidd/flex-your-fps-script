@@ -1,14 +1,14 @@
 local players = game:GetService("Players")
 local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
 
-if not hookfunction then
+if not (hookfunction and hookmetamethod) then
     game:GetService("StarterGui"):SetCore("SendNotification", {
     	Title = "Error",
-    	Text = "Your exploit does not support hookfunction",
+    	Text = "Your exploit does not support this script",
     	Icon = "rbxassetid://18911855792",
     	Duration = 5
     })
-    error("Your exploit does not support hookfunction")
+    error("Your exploit does not support hookfunction or hookmetamethod")
 end
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
