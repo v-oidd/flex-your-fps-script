@@ -9,7 +9,7 @@ if not hookfunction then
 end
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
-	Title = "made by .void__",
+	Title = "Max FPS is now 2500",
 	Text = "Successfully executed",
 	Icon = "rbxassetid://18911834990",
 	Duration = 3
@@ -58,9 +58,9 @@ local function getFPS()
     if copyFPS then 
         return tonumber(workspace[targetName].Head.fpsGui.FPS.Text:sub(6,-1))
     elseif constant then 
-        return math.max(math.min(fps, 1500), 1)
+        return math.max(math.min(fps, 2500), 1)
     elseif realistic then 
-        return math.max(math.min(fps, 1500), 1) - math.random(0, maxFPSToSubtract)
+        return math.max(math.min(fps, 2500), 1) - math.random(0, maxFPSToSubtract)
     end
     return nil
 end
