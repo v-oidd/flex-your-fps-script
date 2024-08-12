@@ -10,9 +10,9 @@ end
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
 	Title = "Max FPS is now 2500",
-	Text = "Successfully executed",
+	Text = "",
 	Icon = "rbxassetid://18911834990",
-	Duration = 3
+	Duration = 5
 }) 
 
 local players = game:GetService("Players")
