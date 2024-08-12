@@ -1,22 +1,42 @@
 local players = game:GetService("Players")
 local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
+local fpsDropdown 
+local pingDropdown
 
-if not (hookfunction and hookmetamethod) then
+if not (hookfunction or hookmetamethod) then
     game:GetService("StarterGui"):SetCore("SendNotification", {
-    	Title = "Error",
-    	Text = "Your exploit does not support this script",
-    	Icon = "rbxassetid://18911855792",
-    	Duration = 5
+        Title = "Error",
+        Text = "Your exploit does not support this script",
+        Icon = "rbxassetid://18911855792",
+        Duration = 5
     })
     error("Your exploit does not support hookfunction or hookmetamethod")
 end
 
-game:GetService("StarterGui"):SetCore("SendNotification",{
-	Title = "Enter \"inf\" to get the max ping",
-	Text = "made by .void__",
-	Icon = "rbxassetid://18911834990",
-	Duration = 5
-}) 
+if not hookfunction then 
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "FPS UI was not loaded",
+        Text = "Your exploit does not support hookfunction",
+        Icon = "rbxassetid://18911834990",
+        Duration = 5
+    }) 
+end
+
+if not hookmetamethod then 
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "Ping UI was not loaded",
+        Text = "Your exploit does not support hookmetamethod",
+        Icon = "rbxassetid://18911834990",
+        Duration = 5
+    })
+else 
+    game:GetService("StarterGui"):SetCore("SendNotification",{
+        Title = "Enter \"inf\" for infinite ping",
+        Text = "made by .void__",
+        Icon = "rbxassetid://18911834990",
+        Duration = 5
+    }) 
+end
 
 local settings = {
     fps = {
@@ -41,75 +61,6 @@ local settings = {
     }
 }
 
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-local w = library:CreateWindow("Flex Your FPS")
-
-local b = w:CreateFolder("FPS Modifier")
-local c = w:CreateFolder("FPS Copier")
-
-local d = w:CreateFolder("Ping Modifier")
-local e = w:CreateFolder("Ping Copier")
-
-b:Toggle("Realistic FPS", function(bool)
-    settings.fps.realistic = bool
-end)
-
-b:Toggle("Constant FPS", function(bool)
-    settings.fps.constant = bool
-end)
-
-b:Box("FPS", "number", function(value)
-    settings.fps.value = value
-end)
-
-b:Box("Realistic FPS Range", "number", function(value)
-    settings.fps.maxToSubtract = value
-end)
-
-c:Toggle("Copy FPS", function(bool)
-    settings.fps.copy = bool 
-end)
-
-local fpsDropdown = c:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
-    settings.fps.targetName = plrName
-end)
-
-d:Toggle("Realistic Ping", function(bool)
-    settings.ping.realistic = bool
-end)
-
-d:Toggle("Constant Ping", function(bool)
-    settings.ping.constant = bool
-end)
-
-d:Box("Ping", "string", function(value)
-    if table.find({"inf", "infinite", "infinity"}, value) then 
-        settings.ping.value = math.huge
-    elseif table.find({"-inf", "-infinite", "-infinity"}, value) then
-        settings.ping.value = -math.huge
-    else
-        settings.ping.value = tonumber(value) or 10
-    end
-end)
-
-d:Box("Realistic Ping Range", "string", function(value)
-    if table.find({"inf", "infinite", "infinity"}, value) then 
-        settings.ping.maxToSubtract = math.huge
-    elseif table.find({"-inf", "-infinite", "-infinity"}, value) then 
-        settings.ping.maxToSubtract = -math.huge
-    else
-        settings.ping.maxToSubtract = tonumber(value) or 10
-    end
-end)
-
-e:Toggle("Copy Ping", function(bool)
-    settings.ping.copy = bool 
-end)
-
-local pingDropdown = e:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
-    settings.ping.targetName = plrName
-end)
-
 local function getValue(valueType)
     if settings[valueType].copy then 
         if valueType == "fps" then
@@ -125,33 +76,120 @@ local function getValue(valueType)
     return nil
 end
 
-for i,v in pairs(getgc()) do
-    if type(v) == "function" and getfenv(v).script == players.LocalPlayer.PlayerScripts.Initiator.Framework then
-        if debug.getinfo(v).numparams == 3 then
-            hookfunction(v, function() 
-                return getValue("fps")
-            end)
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
+local w = library:CreateWindow("Flex Your FPS")
+
+local function loadFPSUI()
+    local b = w:CreateFolder("FPS Modifier")
+    local c = w:CreateFolder("FPS Copier")
+    
+    b:Toggle("Realistic FPS", function(bool)
+        settings.fps.realistic = bool
+    end)
+    
+    b:Toggle("Constant FPS", function(bool)
+        settings.fps.constant = bool
+    end)
+    
+    b:Box("FPS", "number", function(value)
+        settings.fps.value = value
+    end)
+    
+    b:Box("Realistic FPS Range", "number", function(value)
+        settings.fps.maxToSubtract = value
+    end)
+    
+    c:Toggle("Copy FPS", function(bool)
+        settings.fps.copy = bool 
+    end)
+    
+    fpsDropdown = c:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
+        settings.fps.targetName = plrName
+    end)
+end
+
+local function loadPingUI()
+    local d = w:CreateFolder("Ping Modifier")
+    local e = w:CreateFolder("Ping Copier")
+    
+    d:Toggle("Realistic Ping", function(bool)
+        settings.ping.realistic = bool
+    end)
+    
+    d:Toggle("Constant Ping", function(bool)
+        settings.ping.constant = bool
+    end)
+    
+    d:Box("Ping", "string", function(value)
+        if table.find({"inf", "infinite", "infinity"}, value) then 
+            settings.ping.value = math.huge
+        elseif table.find({"-inf", "-infinite", "-infinity"}, value) then
+            settings.ping.value = -math.huge
+        else
+            settings.ping.value = tonumber(value) or 10
+        end
+    end)
+    
+    d:Box("Realistic Ping Range", "string", function(value)
+        if table.find({"inf", "infinite", "infinity"}, value) then 
+            settings.ping.maxToSubtract = math.huge
+        elseif table.find({"-inf", "-infinite", "-infinity"}, value) then 
+            settings.ping.maxToSubtract = -math.huge
+        else
+            settings.ping.maxToSubtract = tonumber(value) or 10
+        end
+    end)
+    
+    e:Toggle("Copy Ping", function(bool)
+        settings.ping.copy = bool 
+    end)
+    
+    pingDropdown = e:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
+        settings.ping.targetName = plrName
+    end)
+end
+
+if hookfunction then 
+    loadFPSUI()
+    for i,v in pairs(getgc()) do
+        if type(v) == "function" and getfenv(v).script == players.LocalPlayer.PlayerScripts.Initiator.Framework then
+            if debug.getinfo(v).numparams == 3 then
+                hookfunction(v, function() 
+                    return getValue("fps")
+                end)
+            end
         end
     end
 end
 
-local namecall
-namecall = hookmetamethod(game, "__namecall", function(self, ...)
-    local method = getnamecallmethod()
-    if method == "FireServer" and self == pingRemote then
-        local args = {...}
-        args[1] = getValue("ping")
-        return namecall(self, unpack(args))
-    end
-    return namecall(self, ...)
-end)
+if hookmetamethod then
+    loadPingUI()
+    local namecall
+    namecall = hookmetamethod(game, "__namecall", function(self, ...)
+        local method = getnamecallmethod()
+        if method == "FireServer" and self == pingRemote then
+            local args = {...}
+            args[1] = getValue("ping")
+            return namecall(self, unpack(args))
+        end
+        return namecall(self, ...)
+    end)
+end
 
 players.PlayerAdded:Connect(function()
-    fpsDropdown:Refresh(players:GetPlayers())
-    pingDropdown:Refresh(players:GetPlayers())
+    if hookfunction then
+        fpsDropdown:Refresh(players:GetPlayers())
+    end
+    if hookmetamethod then
+        pingDropdown:Refresh(players:GetPlayers())
+    end
 end)
 
 players.PlayerRemoving:Connect(function()
-    fpsDropdown:Refresh(players:GetPlayers())
-    pingDropdown:Refresh(players:GetPlayers())
+    if hookfunction then
+        fpsDropdown:Refresh(players:GetPlayers())
+    end
+    if hookmetamethod then
+        pingDropdown:Refresh(players:GetPlayers())
+    end
 end)
