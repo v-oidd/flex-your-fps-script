@@ -1,3 +1,6 @@
+local players = game:GetService("Players")
+local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
+
 if not hookfunction then
     game:GetService("StarterGui"):SetCore("SendNotification", {
     	Title = "Error",
@@ -9,76 +12,146 @@ if not hookfunction then
 end
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
-	Title = "Max FPS is now 2500",
-	Text = "",
+	Title = "Enter \"inf\" to get the max ping",
+	Text = "made by .void__",
 	Icon = "rbxassetid://18911834990",
 	Duration = 5
 }) 
 
-local players = game:GetService("Players")
-
-local fps = 60
-local maxFPSToSubtract = 10
-local realistic = false
-local constant = false
-local copyFPS = false
-local targetName = nil
+local settings = {
+    fps = {
+        value = 60,
+        maxToSubtract = 10,
+        realistic = false,
+        constant = false,
+        copy = false,
+        targetName = nil,
+        min = 1,
+        max = 2500
+    },
+    ping = {
+        value = 60,
+        maxToSubtract = 10,
+        realistic = false,
+        constant = false,
+        copy = false,
+        targetName = nil,
+        min = -math.huge,
+        max = math.huge
+    }
+}
 
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local w = library:CreateWindow("Flex Your FPS")
+
 local b = w:CreateFolder("FPS Modifier")
 local c = w:CreateFolder("FPS Copier")
 
+local d = w:CreateFolder("Ping Modifier")
+local e = w:CreateFolder("Ping Copier")
+
 b:Toggle("Realistic FPS", function(bool)
-    realistic = bool
+    settings.fps.realistic = bool
 end)
 
 b:Toggle("Constant FPS", function(bool)
-    constant = bool
+    settings.fps.constant = bool
 end)
 
 b:Box("FPS", "number", function(value)
-    fps = value
+    settings.fps.value = value
 end)
 
 b:Box("Realistic FPS Range", "number", function(value)
-    maxFPSToSubtract = value
+    settings.fps.maxToSubtract = value
 end)
 
 c:Toggle("Copy FPS", function(bool)
-    copyFPS = bool 
+    settings.fps.copy = bool 
 end)
 
-local dropdown = c:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
-    targetName = plrName
+local fpsDropdown = c:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
+    settings.fps.targetName = plrName
 end)
 
+d:Toggle("Realistic Ping", function(bool)
+    settings.ping.realistic = bool
+end)
 
-local function getFPS()
-    if copyFPS then 
-        return tonumber(workspace[targetName].Head.fpsGui.FPS.Text:sub(6,-1))
-    elseif constant then 
-        return math.max(math.min(fps, 2500), 1)
-    elseif realistic then 
-        return math.max(math.min(fps, 2500), 1) - math.random(0, maxFPSToSubtract)
+d:Toggle("Constant Ping", function(bool)
+    settings.ping.constant = bool
+end)
+
+d:Box("Ping", "string", function(value)
+    if table.find({"inf", "infinite", "infinity"}, value) then 
+        settings.ping.value = math.huge
+    elseif table.find({"-inf", "-infinite", "-infinity"}, value) then
+        settings.ping.value = -math.huge
+    else
+        settings.ping.value = tonumber(value) or 10
+    end
+end)
+
+d:Box("Realistic Ping Range", "string", function(value)
+    if table.find({"inf", "infinite", "infinity"}, value) then 
+        settings.ping.maxToSubtract = math.huge
+    elseif table.find({"-inf", "-infinite", "-infinity"}, value) then 
+        settings.ping.maxToSubtract = -math.huge
+    else
+        settings.ping.maxToSubtract = tonumber(value) or 10
+    end
+end)
+
+e:Toggle("Copy Ping", function(bool)
+    settings.ping.copy = bool 
+end)
+
+local pingDropdown = e:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
+    settings.ping.targetName = plrName
+end)
+
+local function getValue(valueType)
+    if settings[valueType].copy then 
+        if valueType == "fps" then
+            return tonumber(workspace[settings[valueType].targetName].Head.fpsGui.FPS.Text:sub(6,-1))
+        elseif valueType == "ping" then
+            return tonumber(workspace[settings[valueType].targetName].Head.fpsGui.Ping.Text:sub(7,-1))
+        end
+    elseif settings[valueType].constant then 
+        return math.max(math.min(settings[valueType].value, settings[valueType].max), settings[valueType].min)
+    elseif settings[valueType].realistic then 
+        return math.max(math.min(settings[valueType].value, settings[valueType].max), settings[valueType].min) - math.random(0, settings[valueType].maxToSubtract)
     end
     return nil
 end
 
 for i,v in pairs(getgc()) do
-    if type(v) == "function" and getfenv(v).script == players.LocalPlayer.PlayerScripts.LocalScript then
+    if type(v) == "function" and getfenv(v).script == players.LocalPlayer.PlayerScripts.Initiator.Framework then
         if debug.getinfo(v).numparams == 3 then
             hookfunction(v, function() 
-                return getFPS()
+                return getValue("fps")
             end)
         end
     end
 end
 
+local namecall
+namecall = hookmetamethod(game, "__namecall", function(self, ...)
+    local method = getnamecallmethod()
+    if method == "FireServer" and self == pingRemote then
+        local args = {...}
+        args[1] = getValue("ping")
+        return namecall(self, unpack(args))
+    end
+    return namecall(self, ...)
+end)
+
 players.PlayerAdded:Connect(function()
-    dropdown:Refresh(players:GetPlayers())
+    fpsDropdown:Refresh(players:GetPlayers())
+    pingDropdown:Refresh(players:GetPlayers())
 end)
 
 players.PlayerRemoving:Connect(function()
-    dropdown:Refresh(players:GetPlayers())
+    fpsDropdown:Refresh(players:GetPlayers())
+    pingDropdown:Refresh(players:GetPlayers())
 end)
