@@ -4,8 +4,11 @@ end
 
 local players = game:GetService("Players")
 local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
+local random = Random.new()
 local fpsDropdown 
 local pingDropdown
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
+local w = library:CreateWindow("Flex Your FPS")
 
 if not (hookfunction or hookmetamethod) then
     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -18,7 +21,7 @@ else
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
     Title = "GUI loaded",
-    Text = "made by .void__",
+    Text = "Created by .void__",
     Icon = "rbxassetid://18911834990",
     Duration = 5
 })
@@ -39,12 +42,6 @@ if not hookmetamethod then
         Icon = "rbxassetid://18911855792",
         Duration = 5
     })
-else 
-    game:GetService("StarterGui"):SetCore("SendNotification",{
-        Title = "Enter \"inf\" into the Ping UI for infinite ping",
-        Text = "(without the quotation marks)",
-        Duration = 5
-    })
 end
 
 local settings = {
@@ -54,7 +51,7 @@ local settings = {
         realistic = false,
         constant = false,
         copy = false,
-        targetName = nil,
+        targetName = players.LocalPlayer.Name,
         min = 1,
         max = 2500,
         placeholder = false
@@ -65,22 +62,28 @@ local settings = {
         realistic = false,
         constant = false,
         copy = false,
-        targetName = nil,
+        targetName = players.LocalPlayer.Name,
         min = -math.huge,
         max = math.huge,
-        placeholder = false
+        placeholder = false,
+        chaos = {
+            on = false,
+            min = -2^62,
+            max = 2^62,
+            decimals = true
+        }
     }
 }
 
 local function getValue(valueType)
-    if settings[valueType].placeholder then 
+    if settings[valueType].placeholder or settings[valueType].chaos and settings[valueType].chaos.on then 
         return nil 
     end
     if settings[valueType].copy then 
         if valueType == "fps" then
             return tonumber(workspace[settings[valueType].targetName].Head.fpsGui.FPS.Text:sub(6,-1))
         elseif valueType == "ping" then
-            return tonumber(workspace[settings[valueType].targetName].Head.fpsGui.Ping.Text:sub(7,-1))
+            return nil
         end
     elseif settings[valueType].constant then 
         return math.max(math.min(settings[valueType].value, settings[valueType].max), settings[valueType].min)
@@ -90,8 +93,15 @@ local function getValue(valueType)
     return nil
 end
 
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-local w = library:CreateWindow("Flex Your FPS")
+local function parseNumber(value, chaos)
+    if table.find({"inf", "infinite", "infinity"}, value) then 
+        return chaos and 2^32 or math.huge
+    elseif table.find({"-inf", "-infinite", "-infinity"}, value) then
+        return chaos and -2^32 or -math.huge
+    else
+        return tonumber(value) or 0/0
+    end
+end
 
 local function loadFPSUI()
     local b = w:CreateFolder("FPS Modifier")
@@ -132,6 +142,7 @@ end
 local function loadPingUI()
     local d = w:CreateFolder("Ping Modifier")
     local e = w:CreateFolder("Ping Copier")
+    local f = w:CreateFolder("Ping Chaos")
     
     d:Toggle("Realistic Ping", function(bool)
         settings.ping.realistic = bool
@@ -149,23 +160,11 @@ local function loadPingUI()
     end)
     
     d:Box("Ping", "string", function(value)
-        if table.find({"inf", "infinite", "infinity"}, value) then 
-            settings.ping.value = math.huge
-        elseif table.find({"-inf", "-infinite", "-infinity"}, value) then
-            settings.ping.value = -math.huge
-        else
-            settings.ping.value = tonumber(value) or 10
-        end
+        settings.ping.value = parseNumber(value, false)
     end)
     
     d:Box("Realistic Ping Range", "string", function(value)
-        if table.find({"inf", "infinite", "infinity"}, value) then 
-            settings.ping.maxToSubtract = math.huge
-        elseif table.find({"-inf", "-infinite", "-infinity"}, value) then 
-            settings.ping.maxToSubtract = -math.huge
-        else
-            settings.ping.maxToSubtract = tonumber(value) or 10
-        end
+        settings.ping.maxToSubtract = parseNumber(value, false)
     end)
     
     e:Toggle("Copy Ping", function(bool)
@@ -174,6 +173,22 @@ local function loadPingUI()
     
     pingDropdown = e:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
         settings.ping.targetName = plrName
+    end)
+
+    f:Toggle("Chaos Ping", function(bool)
+        settings.ping.chaos.on = bool
+    end)
+    
+    f:Toggle("No decimals", function(bool)
+        settings.ping.chaos.decimals = bool
+    end)
+    
+    f:Box("Minimum Ping", "string", function(value)
+        settings.ping.chaos.min = parseNumber(value, true)
+    end)
+
+    f:Box("Maximum Ping", "string", function(value)
+        settings.ping.chaos.max = parseNumber(value, true)
     end)
 end
 
@@ -195,7 +210,7 @@ if hookmetamethod then
     local namecall
     namecall = hookmetamethod(game, "__namecall", function(self, ...)
         local method = getnamecallmethod()
-        if method == "FireServer" and self == pingRemote then
+        if method == "FireServer" and self == pingRemote and not checkcaller() then
             local args = {...}
             args[1] = getValue("ping")
             return namecall(self, unpack(args))
@@ -221,5 +236,23 @@ players.PlayerRemoving:Connect(function()
         pingDropdown:Refresh(players:GetPlayers())
     end
 end)
+
+coroutine.wrap(function()
+    local chaosMin
+    local chaosMax
+    while task.wait() do 
+        if settings.ping.chaos.on then 
+            chaosMin = settings.ping.chaos.min
+            chaosMax = settings.ping.chaos.max
+            if settings.ping.chaos.decimals then
+                pingRemote:FireServer(random:NextNumber(chaosMin, chaosMax))
+            else 
+                pingRemote:FireServer(random:NextInteger(chaosMin, chaosMax))
+            end
+        elseif settings.ping.copy then
+            pingRemote:FireServer(tonumber(workspace[settings.ping.targetName].Head.fpsGui.Ping.Text:sub(6,-1)))
+        end 
+    end 
+end)()
 
 end
