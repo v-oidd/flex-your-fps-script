@@ -8,14 +8,14 @@ local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
 local random = Random.new()
 local fpsDropdown 
 local pingDropdown
-local ls
+local localScript
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local w = library:CreateWindow("Flexer")
 
 if localPlayer.PlayerScripts:FindFirstChild("System") then
-    ls = localPlayer.PlayerScripts.System.Handler 
+    localScript = localPlayer.PlayerScripts.System.Handler 
 else 
-    ls = localPlayer.PlayerScripts.Initiator.Framework
+    localScript = localPlayer.PlayerScripts.Initiator.Framework
 end
 
 if not (hookfunction or hookmetamethod) then
@@ -112,90 +112,90 @@ local function parseNumber(value, chaos)
 end
 
 local function loadFPSUI()
-    local b = w:CreateFolder("FPS Modifier")
-    local c = w:CreateFolder("FPS Copier")
+    local a = w:CreateFolder("FPS Modifier")
+    local b = w:CreateFolder("FPS Copier")
     
-    b:Toggle("Realistic FPS", function(bool)
+    a:Toggle("Realistic FPS", function(bool)
         settings.fps.realistic = bool
     end)
     
-    b:Toggle("Constant FPS", function(bool)
+    a:Toggle("Constant FPS", function(bool)
         settings.fps.constant = bool
     end)
     
-    b:Toggle("0 FPS (will reset you)", function(bool)
+    a:Toggle("0 FPS (will reset you)", function(bool)
         settings.fps.placeholder = bool
         if settings.fps.placeholder then 
             localPlayer.Character.Humanoid.Health = 0 
         end
     end)
     
-    b:Box("FPS", "number", function(value)
+    a:Box("FPS", "number", function(value)
         settings.fps.value = value
     end)
     
-    b:Box("Realistic FPS Range", "number", function(value)
+    a:Box("Realistic FPS Range", "number", function(value)
         settings.fps.maxToSubtract = value
     end)
     
-    c:Toggle("Copy FPS", function(bool)
+    b:Toggle("Copy FPS", function(bool)
         settings.fps.copy = bool 
     end)
     
-    fpsDropdown = c:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
+    fpsDropdown = b:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
         settings.fps.targetName = plrName
     end)
 end
 
 local function loadPingUI()
-    local d = w:CreateFolder("Ping Modifier")
-    local e = w:CreateFolder("Ping Copier")
-    local f = w:CreateFolder("Ping Chaos")
+    local c = w:CreateFolder("Ping Modifier")
+    local d = w:CreateFolder("Ping Copier")
+    local e = w:CreateFolder("Ping Chaos")
     
-    d:Toggle("Realistic Ping", function(bool)
+    c:Toggle("Realistic Ping", function(bool)
         settings.ping.realistic = bool
     end)
     
-    d:Toggle("Constant Ping", function(bool)
+    c:Toggle("Constant Ping", function(bool)
         settings.ping.constant = bool
     end)
 
-    d:Toggle("Placeholder Ping (will reset you)", function(bool)
+    c:Toggle("Placeholder Ping (will reset you)", function(bool)
         settings.ping.placeholder = bool
         if settings.ping.placeholder then 
             localPlayer.Character.Humanoid.Health = 0 
         end
     end)
     
-    d:Box("Ping", "string", function(value)
+    c:Box("Ping", "string", function(value)
         settings.ping.value = parseNumber(value, false)
     end)
     
-    d:Box("Realistic Ping Range", "string", function(value)
+    c:Box("Realistic Ping Range", "string", function(value)
         settings.ping.maxToSubtract = parseNumber(value, false)
     end)
     
-    e:Toggle("Copy Ping", function(bool)
+    d:Toggle("Copy Ping", function(bool)
         settings.ping.copy = bool 
     end)
     
-    pingDropdown = e:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
+    pingDropdown = d:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
         settings.ping.targetName = plrName
     end)
 
-    f:Toggle("Chaos Ping", function(bool)
+    e:Toggle("Chaos Ping", function(bool)
         settings.ping.chaos.on = bool
     end)
     
-    f:Toggle("No Decimals", function(bool)
+    e:Toggle("No Decimals", function(bool)
         settings.ping.chaos.noDecimals = bool
     end)
     
-    f:Box("Minimum Ping", "string", function(value)
+    e:Box("Minimum Ping", "string", function(value)
         settings.ping.chaos.min = parseNumber(value, true)
     end)
 
-    f:Box("Maximum Ping", "string", function(value)
+    e:Box("Maximum Ping", "string", function(value)
         settings.ping.chaos.max = parseNumber(value, true)
     end)
 end
@@ -203,7 +203,7 @@ end
 if hookfunction then 
     loadFPSUI()
     for i,v in pairs(getgc()) do
-        if type(v) == "function" and getfenv(v).script == ls then
+        if type(v) == "function" and getfenv(v).script == localScript then
             if debug.getinfo(v).numparams == 3 then
                 hookfunction(v, function() 
                     return getValue("fps")
