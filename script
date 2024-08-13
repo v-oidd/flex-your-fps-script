@@ -3,12 +3,22 @@ if hookmetamethod then
 end 
 
 local players = game:GetService("Players")
+local localPlayer = players.localPlayer
 local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
 local random = Random.new()
 local fpsDropdown 
 local pingDropdown
+local ls
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local w = library:CreateWindow("Flexer")
+
+if localPlayer.PlayerScripts:FindFirstChild("System") then
+    print(1)
+    ls = localPlayer.PlayerScripts.System.Handler 
+else 
+    print(2)
+    ls = localPlayer.PlayerScripts.Initiator.Framework
+end
 
 if not (hookfunction or hookmetamethod) then
     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -51,7 +61,7 @@ local settings = {
         realistic = false,
         constant = false,
         copy = false,
-        targetName = players.LocalPlayer.Name,
+        targetName = localPlayer.Name,
         min = 1,
         max = 2500,
         placeholder = false
@@ -62,7 +72,7 @@ local settings = {
         realistic = false,
         constant = false,
         copy = false,
-        targetName = players.LocalPlayer.Name,
+        targetName = localPlayer.Name,
         min = -math.huge,
         max = math.huge,
         placeholder = false,
@@ -118,7 +128,7 @@ local function loadFPSUI()
     b:Toggle("0 FPS (will reset you)", function(bool)
         settings.fps.placeholder = bool
         if settings.fps.placeholder then 
-            players.LocalPlayer.Character.Humanoid.Health = 0 
+            localPlayer.Character.Humanoid.Health = 0 
         end
     end)
     
@@ -155,7 +165,7 @@ local function loadPingUI()
     d:Toggle("Placeholder Ping (will reset you)", function(bool)
         settings.ping.placeholder = bool
         if settings.ping.placeholder then 
-            players.LocalPlayer.Character.Humanoid.Health = 0 
+            localPlayer.Character.Humanoid.Health = 0 
         end
     end)
     
@@ -195,7 +205,7 @@ end
 if hookfunction then 
     loadFPSUI()
     for i,v in pairs(getgc()) do
-        if type(v) == "function" and getfenv(v).script == players.LocalPlayer.PlayerScripts.Initiator.Framework then
+        if type(v) == "function" and getfenv(v).script == ls then
             if debug.getinfo(v).numparams == 3 then
                 hookfunction(v, function() 
                     return getValue("fps")
