@@ -250,7 +250,7 @@ coroutine.wrap(function()
                 pingRemote:FireServer(random:NextNumber(chaosMin, chaosMax))
             end
         elseif settings.ping.copy then
-            if workspace:FindFirstChild(settings.ping.targetName) and workspace[settings.ping.targetName]:FindFirstChild("Head")
+            if workspace:FindFirstChild(settings.ping.targetName) and workspace[settings.ping.targetName]:FindFirstChild("Head") then
                 pingRemote:FireServer(tonumber(workspace[settings.ping.targetName].Head.fpsGui.Ping.Text:sub(6,-1)))
             end
         end 
