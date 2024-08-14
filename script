@@ -106,9 +106,9 @@ local function getValue(valueType)
             return defaultValue
         end
     elseif settings[valueType].constant then 
-        return math.max(math.min(settings[valueType].value, settings[valueType].max), settings[valueType].min)
+        return math.clamp(settings[valueType].value, settings[valueType].min, settings[valueType].max)
     elseif settings[valueType].realistic then 
-        return math.max(math.min(settings[valueType].value, settings[valueType].max), settings[valueType].min) - math.random(0, settings[valueType].maxToSubtract)
+        return math.clamp(settings[valueType].value, settings[valueType].min, settings[valueType].max) - math.random(0, math.min(settings[valueType].maxToSubtract, 2147483647))
     end
     return defaultValue
 end
