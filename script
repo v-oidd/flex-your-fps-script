@@ -211,7 +211,7 @@ if hookfunction then
         if type(v) == "function" and getfenv(v).script == localScript then
             if debug.getinfo(v).numparams == 3 then
                 hookfunction(v, function() 
-                    return getValue("fps", nil)
+                    return getValue("fps")
                 end)
             end
         end
