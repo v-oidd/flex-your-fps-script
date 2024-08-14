@@ -83,22 +83,22 @@ local settings = {
     }
 }
 
-local function getValue(valueType)
+local function getValue(valueType, realValue)
     if settings[valueType].placeholder or settings[valueType].chaos and settings[valueType].chaos.on then 
-        return nil 
+        return realValue
     end
     if settings[valueType].copy then 
         if valueType == "fps" then
             return tonumber(workspace[settings[valueType].targetName].Head.fpsGui.FPS.Text:sub(6,-1))
         elseif valueType == "ping" then
-            return nil
+            return realValue
         end
     elseif settings[valueType].constant then 
         return math.max(math.min(settings[valueType].value, settings[valueType].max), settings[valueType].min)
     elseif settings[valueType].realistic then 
         return math.max(math.min(settings[valueType].value, settings[valueType].max), settings[valueType].min) - math.random(0, settings[valueType].maxToSubtract)
     end
-    return nil
+    return realValue
 end
 
 local function parseNumber(value, chaos)
@@ -206,7 +206,7 @@ if hookfunction then
         if type(v) == "function" and getfenv(v).script == localScript then
             if debug.getinfo(v).numparams == 3 then
                 hookfunction(v, function() 
-                    return getValue("fps")
+                    return getValue("fps", nil)
                 end)
             end
         end
@@ -220,7 +220,7 @@ if hookmetamethod then
         local method = getnamecallmethod()
         if method == "FireServer" and self == pingRemote and not checkcaller() then
             local args = {...}
-            args[1] = getValue("ping")
+            args[1] = getValue("ping", args[1])
             return namecall(self, unpack(args))
         end
         return namecall(self, ...)
