@@ -10,7 +10,6 @@ local fpsDropdown
 local pingDropdown
 local localScript
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-local w = library:CreateWindow("Flexer")
 
 if localPlayer.PlayerScripts:FindFirstChild("System") then
     localScript = localPlayer.PlayerScripts.System.Handler 
@@ -26,6 +25,8 @@ if not (hookfunction or hookmetamethod) then
         Duration = 5
     })
 else
+
+local w = library:CreateWindow("Flexer")
 
 game:GetService("StarterGui"):SetCore("SendNotification",{
     Title = "Flexer loaded",
