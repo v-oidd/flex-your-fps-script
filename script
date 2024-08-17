@@ -6,21 +6,15 @@ local players = game:GetService("Players")
 local localPlayer = players.localPlayer
 local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
 local random = Random.new()
+local localScript = localPlayer.PlayerScripts.System.Handler
 local fpsDropdown 
 local pingDropdown
-local localScript
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-
-if localPlayer.PlayerScripts:FindFirstChild("System") then
-    localScript = localPlayer.PlayerScripts.System.Handler 
-else 
-    localScript = localPlayer.PlayerScripts.Initiator.Framework
-end
 
 if not (hookfunction or hookmetamethod) then
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Error",
-        Text = "Your exploit does not support this script",
+        Text = "Your exploit does not support Flexer",
         Icon = "rbxassetid://18911855792",
         Duration = 5
     })
