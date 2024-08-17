@@ -4,7 +4,7 @@ end
 
 local players = game:GetService("Players")
 local localPlayer = players.localPlayer
-local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
+local pingRemote = game:GetService("ReplicatedStorage").PingRem
 local random = Random.new()
 local localScript = localPlayer.PlayerScripts.System.Handler
 local fpsDropdown 
