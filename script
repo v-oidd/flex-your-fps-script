@@ -240,9 +240,7 @@ if hookmetamethod then
     namecall = hookmetamethod(game, "__namecall", function(self, ...)
         local method = getnamecallmethod()
         if not checkcaller() and method == "FireServer" and self == pingRemote then
-            local x = getValue("ping")
-            print(x)
-            return namecall(self, x or task.wait(9e9))
+            return namecall(self, getValue("ping") or task.wait(9e9))
         end
         return namecall(self, ...)
     end)
