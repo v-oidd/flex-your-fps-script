@@ -1,52 +1,45 @@
-if hookmetamethod then 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua"))()
-end 
-
-local players = game:GetService("Players")
-local localPlayer = players.localPlayer
-local pingRemote = game:GetService("ReplicatedStorage").PingRem
-local random = Random.new()
-local localScript = localPlayer.PlayerScripts.System.Handler
-local fpsDropdown 
-local pingDropdown
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-
-if not (hookfunction or hookmetamethod) then
+--// Notfication function \\--
+local function notify(notification: table)
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Error",
-        Text = "Your exploit does not support Flexer",
-        Icon = "rbxassetid://18911855792",
+        Title = notification.title,
+        Text = notification.text,
+        Icon = notification.icon,
         Duration = 5
     })
+end
+
+--// Check for exploit functions \\--
+if not (hookfunction or hookmetamethod) then
+    notify{title = "Error", text = "Your exploit does not support this script", icon = "rbxassetid://18911855792"}
 else
 
+--// Local variables \\--
+local Players = game:GetService("Players")
+local localPlayer = Players.localPlayer
+local localScript = localPlayer.PlayerScripts.System.Handler
+local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
+local random = Random.new()
+local fpsDropdown
+local pingDropdown
+local fakePing = false
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local w = library:CreateWindow("Flexer")
 
-game:GetService("StarterGui"):SetCore("SendNotification",{
-    Title = "Flexer loaded",
-    Text = "Created by .void__",
-    Icon = "rbxassetid://18911834990",
-    Duration = 5
-})
+--// Notifications \\--
+notify{title = "Flexer loaded", text = "Created by .void__", icon = "rbxassetid://18911834990"}
 
 if not hookfunction then 
-    game:GetService("StarterGui"):SetCore("SendNotification",{
-        Title = "FPS UI was not loaded",
-        Text = "Your exploit does not support hookfunction",
-        Icon = "rbxassetid://18911855792",
-        Duration = 5
-    }) 
+    notify{title = "FPS UI was not loaded", text = "Your exploit does not support hookfunction", icon = "rbxassetid://18911855792"}
 end
 
 if not hookmetamethod then 
-    game:GetService("StarterGui"):SetCore("SendNotification",{
-        Title = "Ping UI was not loaded",
-        Text = "Your exploit does not support hookmetamethod",
-        Icon = "rbxassetid://18911855792",
-        Duration = 5
-    })
+    notify{title = "Ping UI was not loaded", text = "Your exploit does not support hookmetamethod", icon = "rbxassetid://18911855792"}
+else
+--// Adonis bypass \\--
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua"))()
 end
 
+--// FPS & ping settings \\--
 local settings = {
     fps = {
         value = 60,
@@ -54,10 +47,10 @@ local settings = {
         realistic = false,
         constant = false,
         copy = false,
-        targetName = localPlayer.Name,
+        copyTarget = localPlayer.Name,
+        placeholder = false,
         min = 1,
         max = 2500,
-        placeholder = false,
         chaos = {
             on = false,
             min = 0,
@@ -71,53 +64,70 @@ local settings = {
         realistic = false,
         constant = false,
         copy = false,
-        targetName = localPlayer.Name,
-        min = -math.huge,
-        max = math.huge,
+        copyTarget = localPlayer.Name,
         placeholder = false,
+        min = 1,
+        max = math.huge,
         chaos = {
             on = false,
-            min = -2^62,
+            min = 1,
             max = 2^62,
             noDecimals = false
         }
     }
 }
 
-local function getValue(valueType)
-    local defaultValue
-    if valueType == "fps" then
-        defaultValue = tonumber(localPlayer.Character.Head.fpsGui.FPS.Text:sub(6, -1)) or 0
-    elseif valueType == "ping" then
-        defaultValue = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6, -1)) or 0
+local function getValue(valueType: string): number
+    if settings[valueType].placeholder then 
+        return nil
     end
-    if settings[valueType].placeholder or settings[valueType].chaos and settings[valueType].chaos.on then 
-        return defaultValue
+    
+    local currentValue
+    if valueType == "fps" then 
+        currentValue = tonumber(localPlayer.Character.Head.fpsGui.FPS.Text:sub(6,-1)) or 1
+    else
+        currentValue = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6,-1)) or 1
     end
+    
+    if settings[valueType].chaos and settings[valueType].chaos.on then 
+        return currentValue
+    end
+    
     if settings[valueType].copy then 
         if valueType == "fps" then
-            return tonumber(workspace[settings[valueType].targetName].Head.fpsGui.FPS.Text:sub(6, -1))
+            return tonumber(Players[settings[valueType].copyTarget].Character.Head.fpsGui.FPS.Text:sub(6,-1))
         elseif valueType == "ping" then
-            return defaultValue
+            return tonumber(Players[settings[valueType].copyTarget].Character.Head.fpsGui.Ping.Text:sub(6,-1))
         end
     elseif settings[valueType].constant then 
         return math.clamp(settings[valueType].value, settings[valueType].min, settings[valueType].max)
     elseif settings[valueType].realistic then 
-        return math.clamp(settings[valueType].value, settings[valueType].min, settings[valueType].max) - math.random(0, math.min(settings[valueType].maxToSubtract, 2147483647))
+        local randomValue = math.random(0, math.abs(math.min(settings[valueType].maxToSubtract, 2147483647)))
+        return math.clamp(settings[valueType].value - randomValue, settings[valueType].min, settings[valueType].max)
     end
-    return defaultValue
+    return currentValue
 end
 
-local function parseNumber(value, chaos)
+--// Parse string to number \\--
+local function parseNumber(value: string, valueType: string?): number
+    if value == "" then 
+        if valueType == "chaosMin" then 
+            return 1 
+        elseif valueType == "chaosMax" then 
+            return 2^62 
+        end 
+    end 
+    
     if table.find({"inf", "infinite", "infinity"}, value) then 
-        return chaos and 2^32 or math.huge
-    elseif table.find({"-inf", "-infinite", "-infinity"}, value) then
-        return chaos and -2^32 or -math.huge
-    else
-        return tonumber(value) or 0/0
+        return settings.ping.chaos.on and 2^62 or math.huge
+    elseif tonumber(value) then 
+        return tonumber(value) >= 1 and tonumber(value) or 1
     end
+    
+    return 0/0
 end
 
+--// Create FPS modifier tabs \\--
 local function loadFPSUI()
     local a = w:CreateFolder("FPS Modifier")
     local b = w:CreateFolder("FPS Copier")
@@ -130,13 +140,6 @@ local function loadFPSUI()
         settings.fps.constant = bool
     end)
     
-    a:Toggle("0 FPS (will reset you)", function(bool)
-        settings.fps.placeholder = bool
-        if settings.fps.placeholder then 
-            localPlayer.Character.Humanoid.Health = 0 
-        end
-    end)
-    
     a:Box("FPS", "number", function(value)
         settings.fps.value = value
     end)
@@ -144,16 +147,24 @@ local function loadFPSUI()
     a:Box("Realistic FPS Range", "number", function(value)
         settings.fps.maxToSubtract = value
     end)
+
+    a:Toggle("0 FPS (will reset you)", function(bool)
+        settings.fps.placeholder = bool
+        if bool then
+            localPlayer.Character.Humanoid.Health = 0
+        end
+    end)
     
     b:Toggle("Copy FPS", function(bool)
         settings.fps.copy = bool 
     end)
     
-    fpsDropdown = b:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
-        settings.fps.targetName = plrName
+    fpsDropdown = b:Dropdown("Player List", Players:GetPlayers(), true, function(plrName)
+        settings.fps.copyTarget = plrName
     end)
 end
 
+--// Create ping modifier tabs \\--
 local function loadPingUI()
     local c = w:CreateFolder("Ping Modifier")
     local d = w:CreateFolder("Ping Copier")
@@ -168,19 +179,27 @@ local function loadPingUI()
     end)
     
     c:Box("Ping", "string", function(value)
-        settings.ping.value = parseNumber(value, false)
+        settings.ping.value = parseNumber(value)
     end)
     
     c:Box("Realistic Ping Range", "string", function(value)
-        settings.ping.maxToSubtract = parseNumber(value, false)
+        settings.ping.maxToSubtract = parseNumber(value)
+    end)
+    
+    c:Toggle("Placeholder Ping (will reset you)", function(bool)
+        settings.ping.placeholder = bool
+        fakePing = true
+        if bool then
+            localPlayer.Character.Humanoid.Health = 0 
+        end
     end)
     
     d:Toggle("Copy Ping", function(bool)
         settings.ping.copy = bool 
     end)
     
-    pingDropdown = d:Dropdown("Player List", players:GetPlayers(), true, function(plrName)
-        settings.ping.targetName = plrName
+    pingDropdown = d:Dropdown("Player List", Players:GetPlayers(), true, function(plrName)
+        settings.ping.copyTarget = plrName
     end)
 
     e:Toggle("Chaos Ping", function(bool)
@@ -192,77 +211,92 @@ local function loadPingUI()
     end)
     
     e:Box("Minimum Ping", "string", function(value)
-        settings.ping.chaos.min = parseNumber(value, true)
+        settings.ping.chaos.min = parseNumber(value, "chaosMin")
     end)
 
     e:Box("Maximum Ping", "string", function(value)
-        settings.ping.chaos.max = parseNumber(value, true)
+        settings.ping.chaos.max = parseNumber(value, "chaosMax")
     end)
 end
 
+--// Hook OnClientInvoke callback function to modify FPS \\--
 if hookfunction then 
     loadFPSUI()
     for i,v in pairs(getgc()) do
         if type(v) == "function" and getfenv(v).script == localScript then
             if debug.getinfo(v).numparams == 3 then
                 hookfunction(v, function() 
-                    return getValue("fps")
+                    return getValue("fps") or task.wait(9e9)
                 end)
             end
         end
     end
 end
 
+--// Hook ping remote to modify ping \\--
 if hookmetamethod then
     loadPingUI()
     local namecall
     namecall = hookmetamethod(game, "__namecall", function(self, ...)
         local method = getnamecallmethod()
-        if method == "FireServer" and self == pingRemote and not checkcaller() then
-            local args = {...}
-            args[1] = getValue("ping")
-            return namecall(self, unpack(args))
+        if not checkcaller() and method == "FireServer" and self == pingRemote then
+            local x = getValue("ping")
+            print(x)
+            return namecall(self, x or task.wait(9e9))
         end
         return namecall(self, ...)
     end)
 end
 
-players.PlayerAdded:Connect(function()
+--// Refresh dropdowns \\--
+Players.PlayerAdded:Connect(function()
     if hookfunction then
-        fpsDropdown:Refresh(players:GetPlayers())
+        fpsDropdown:Refresh(Players:GetPlayers())
     end
     if hookmetamethod then
-        pingDropdown:Refresh(players:GetPlayers())
+        pingDropdown:Refresh(Players:GetPlayers())
     end
 end)
 
-players.PlayerRemoving:Connect(function()
+Players.PlayerRemoving:Connect(function()
     if hookfunction then
-        fpsDropdown:Refresh(players:GetPlayers())
+        fpsDropdown:Refresh(Players:GetPlayers())
     end
     if hookmetamethod then
-        pingDropdown:Refresh(players:GetPlayers())
+        pingDropdown:Refresh(Players:GetPlayers())
     end
 end)
 
-coroutine.wrap(function()
+--// Loop update ping based on current settings \\--
+task.spawn(function()
     local chaosMin
     local chaosMax
-    while task.wait() do 
-        if settings.ping.chaos.on then 
-            chaosMin = settings.ping.chaos.min
-            chaosMax = settings.ping.chaos.max
-            if settings.ping.chaos.noDecimals then
-                pingRemote:FireServer(random:NextInteger(chaosMin, chaosMax))
-            else 
-                pingRemote:FireServer(random:NextNumber(chaosMin, chaosMax))
-            end
-        elseif settings.ping.copy then
-            if workspace:FindFirstChild(settings.ping.targetName) and workspace[settings.ping.targetName]:FindFirstChild("Head") then
-                pingRemote:FireServer(tonumber(workspace[settings.ping.targetName].Head.fpsGui.Ping.Text:sub(6, -1)))
-            end
-        end 
+    while task.wait() do
+        if not settings.ping.placeholder then
+            if settings.ping.chaos.on then 
+                chaosMin = settings.ping.chaos.min or 1
+                chaosMax = settings.ping.chaos.max or 2^62
+                if settings.ping.chaos.noDecimals then
+                    pingRemote:FireServer(random:NextInteger(chaosMin, chaosMax))
+                else 
+                    pingRemote:FireServer(random:NextNumber(chaosMin, chaosMax))
+                end
+            elseif settings.ping.copy then
+                if workspace:FindFirstChild(settings.ping.copyTarget) and workspace[settings.ping.copyTarget]:FindFirstChild("Head") then
+                    pingRemote:FireServer(getValue("ping"))
+                end
+            end 
+        end
     end 
-end)()
+end)
 
+--// Emulate fake ping if placeholder ping has been used \\--
+task.spawn(function()
+    while task.wait(1) do 
+        if fakePing and not settings.ping.placeholder then 
+            pingRemote:FireServer(getValue("ping"))
+        end
+    end
+end)
+    
 end
