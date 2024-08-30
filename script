@@ -273,8 +273,8 @@ task.spawn(function()
     while task.wait() do
         if not settings.ping.placeholder then
             if settings.ping.chaos.on then 
-                chaosMin = settings.ping.chaos.min or 1
-                chaosMax = settings.ping.chaos.max or 2^62
+                chaosMin = settings.ping.chaos.min
+                chaosMax = settings.ping.chaos.max
                 if settings.ping.chaos.noDecimals then
                     pingRemote:FireServer(random:NextInteger(chaosMin, chaosMax))
                 else 
