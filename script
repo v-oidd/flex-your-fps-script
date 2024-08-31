@@ -15,7 +15,7 @@ else
 
 --// Local variables \\--
 local Players = game:GetService("Players")
-local localPlayer = Players.localPlayer
+local localPlayer = Players.LocalPlayer
 local localScript = localPlayer.PlayerScripts.System.Handler
 local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
 local random = Random.new()
