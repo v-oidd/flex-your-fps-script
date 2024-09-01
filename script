@@ -250,16 +250,10 @@ end
 local f = w:CreateFolder("Get Obby Badges")
 
 f:Button("Get Badges", function()
-    local originalPos = localPlayer.Character.HumanoidRootPart.CFrame
-    
     for i,v in pairs(obbies) do 
         obbyRemote:FireServer(v)
         firetouchinterest(workspace.Obbies[v]:WaitForChild("badge"), localPlayer.Character.HumanoidRootPart, 0)
     end
-
-    task.wait(.1)
-    
-    localPlayer.Character.HumanoidRootPart.CFrame = originalPos
 end)
 
 --// Refresh dropdowns \\--
