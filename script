@@ -1,3 +1,18 @@
+--// Variables \\--
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local localPlayer = Players.LocalPlayer
+local localScript = localPlayer.PlayerScripts.System.Handler
+local pingRemote = ReplicatedStorage:WaitForChild("PingRem")
+local obbyRemote = ReplicatedStorage:WaitForChild("Obby")
+local obbies = {"Easy", "Medium", "Hard", "Extreme", "Terrifying"}
+local random = Random.new()
+local fpsDropdown
+local pingDropdown
+local fakePing = false
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
+local w = library:CreateWindow("Flexer")
+
 --// Notfication function \\--
 local function notify(notification: table)
     game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -7,23 +22,6 @@ local function notify(notification: table)
         Duration = 5
     })
 end
-
---// Check for exploit functions \\--
-if not (hookfunction or hookmetamethod) then
-    notify{title = "Error", text = "Your exploit does not support this script", icon = "rbxassetid://18911855792"}
-else
-
---// Local variables \\--
-local Players = game:GetService("Players")
-local localPlayer = Players.LocalPlayer
-local localScript = localPlayer.PlayerScripts.System.Handler
-local pingRemote = game:GetService("ReplicatedStorage"):WaitForChild("PingRem")
-local random = Random.new()
-local fpsDropdown
-local pingDropdown
-local fakePing = false
-local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
-local w = library:CreateWindow("Flexer")
 
 --// Notifications \\--
 notify{title = "Flexer loaded", text = "Created by .void__", icon = "rbxassetid://18911834990"}
@@ -248,6 +246,22 @@ if hookmetamethod then
     end)
 end
 
+--// Get obby badges \\-
+local f = w:CreateFolder("Get Obby Badges")
+
+f:Button("Get Badges", function()
+    local originalPos = localPlayer.Character.HumanoidRootPart.CFrame
+    
+    for i,v in pairs(obbies) do 
+        obbyRemote:FireServer(v)
+        firetouchinterest(workspace.Obbies[v]:WaitForChild("badge"), localPlayer.Character.HumanoidRootPart, 0)
+    end
+
+    task.wait(.1)
+    
+    localPlayer.Character.HumanoidRootPart.CFrame = originalPos
+end)
+
 --// Refresh dropdowns \\--
 Players.PlayerAdded:Connect(function()
     if hookfunction then
@@ -298,5 +312,3 @@ task.spawn(function()
         end
     end
 end)
-    
-end
