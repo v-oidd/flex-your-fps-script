@@ -89,7 +89,7 @@ local function getValue(valueType: string): number
         currentValue = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6,-1)) or 1
     end
     
-    if settings[valueType].chaos and settings[valueType].chaos.on then 
+    if settings[valueType].chaos.on then 
         return currentValue
     end
     
