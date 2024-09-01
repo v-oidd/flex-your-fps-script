@@ -248,7 +248,7 @@ if hookmetamethod then
 end
 
 --// Get obby badges \\-
-local f = w:CreateFolder("Get Obby Badges")
+local f = w:CreateFolder("Obby Badges")
 
 f:Button("Get Badges", function()
     for i,v in pairs(obbies) do 
