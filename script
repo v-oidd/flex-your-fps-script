@@ -5,6 +5,7 @@ local localPlayer = Players.LocalPlayer
 local localScript = localPlayer.PlayerScripts.System.Handler
 local pingRemote = ReplicatedStorage:WaitForChild("PingRem")
 local obbyRemote = ReplicatedStorage:WaitForChild("Obby")
+local homeRemote = ReplicatedStorage:WaitForChild("Home")
 local obbies = {"Easy", "Medium", "Hard", "Extreme", "Terrifying"}
 local random = Random.new()
 local fpsDropdown
@@ -254,6 +255,7 @@ f:Button("Get Badges", function()
         obbyRemote:FireServer(v)
         firetouchinterest(workspace.Obbies[v]:WaitForChild("badge"), localPlayer.Character.HumanoidRootPart, 0)
     end
+    homeRemote:FireServer()
 end)
 
 --// Refresh dropdowns \\--
