@@ -106,6 +106,7 @@ local function getValue(valueType: string): number
         local randomValue = math.random(0, math.abs(math.min(settings[valueType].maxToSubtract, 2147483647)))
         return math.clamp(settings[valueType].value - randomValue, settings[valueType].min, settings[valueType].max)
     end
+
     return currentValue
 end
 
