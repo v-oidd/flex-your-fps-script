@@ -142,19 +142,19 @@ local function loadFPSUI()
         settings.fps.constant = bool
     end)
     
+    a:Toggle("0 FPS (will reset you)", function(bool)
+        settings.fps.placeholder = bool
+        if bool then
+            localPlayer.Character.Humanoid.Health = 0
+        end
+    end)
+    
     a:Box("FPS", "number", function(value)
         settings.fps.value = value
     end)
     
     a:Box("Realistic FPS Range", "number", function(value)
         settings.fps.maxToSubtract = value
-    end)
-
-    a:Toggle("0 FPS (will reset you)", function(bool)
-        settings.fps.placeholder = bool
-        if bool then
-            localPlayer.Character.Humanoid.Health = 0
-        end
     end)
     
     b:Toggle("Copy FPS", function(bool)
@@ -180,20 +180,20 @@ local function loadPingUI()
         settings.ping.constant = bool
     end)
     
-    c:Box("Ping", "string", function(value)
-        settings.ping.value = parseNumber(value)
-    end)
-    
-    c:Box("Realistic Ping Range", "string", function(value)
-        settings.ping.maxToSubtract = parseNumber(value)
-    end)
-    
     c:Toggle("Placeholder Ping (will reset you)", function(bool)
         settings.ping.placeholder = bool
         fakePing = true
         if bool then
             localPlayer.Character.Humanoid.Health = 0 
         end
+    end)
+    
+    c:Box("Ping", "string", function(value)
+        settings.ping.value = parseNumber(value)
+    end)
+    
+    c:Box("Realistic Ping Range", "string", function(value)
+        settings.ping.maxToSubtract = parseNumber(value)
     end)
     
     d:Toggle("Copy Ping", function(bool)
