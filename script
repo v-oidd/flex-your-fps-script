@@ -42,7 +42,7 @@ end
 local settings = {
     fps = {
         value = 60,
-        maxToSubtract = 10,
+        realisticRange = 10,
         realistic = false,
         constant = false,
         copy = false,
@@ -59,7 +59,7 @@ local settings = {
     },
     ping = {
         value = 60,
-        maxToSubtract = 10,
+        realisticRange = 10,
         realistic = false,
         constant = false,
         copy = false,
@@ -84,10 +84,11 @@ local function getValue(valueType: string): number
     
     local currentValue
     if valueType == "fps" then 
-        currentValue = tonumber(localPlayer.Character.Head.fpsGui.FPS.Text:sub(6,-1)) or 1
+        currentValue = tonumber(localPlayer.Character.Head.fpsGui.FPS.Text:sub(6,-1))
     else
-        currentValue = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6,-1)) or 1
+        currentValue = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6,-1))
     end
+    currentValue = currentValue or 1
     
     if settings[valueType].chaos.on then 
         return currentValue
@@ -102,7 +103,7 @@ local function getValue(valueType: string): number
     elseif settings[valueType].constant then 
         return math.clamp(settings[valueType].value, settings[valueType].min, settings[valueType].max)
     elseif settings[valueType].realistic then 
-        local randomValue = math.random(0, math.abs(math.min(settings[valueType].maxToSubtract, 2147483647)))
+        local randomValue = math.random(0, math.abs(math.min(settings[valueType].realisticRange, 2147483647)))
         return math.clamp(settings[valueType].value - randomValue, settings[valueType].min, settings[valueType].max)
     end
 
@@ -153,7 +154,7 @@ local function loadFPSUI()
     end)
     
     a:Box("Realistic FPS Range", "number", function(value)
-        settings.fps.maxToSubtract = value
+        settings.fps.realisticRange = value
     end)
     
     b:Toggle("Copy FPS", function(bool)
@@ -192,7 +193,7 @@ local function loadPingUI()
     end)
     
     c:Box("Realistic Ping Range", "string", function(value)
-        settings.ping.maxToSubtract = parseNumber(value)
+        settings.ping.realisticRange = parseNumber(value)
     end)
     
     d:Toggle("Copy Ping", function(bool)
