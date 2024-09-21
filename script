@@ -11,11 +11,24 @@ local random = Random.new()
 local fpsDropdown
 local pingDropdown
 local fakePing = false
+local autoLagOption = false
+local autoLag = false
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local w = library:CreateWindow("Flexer")
 
+print([[
+
+- "Realistic FPS/Ping Range" is the amount your FPS/Ping will flunctuate below the target FPS (when Realistic FPS/Ping is turned on)
+
+- "Auto Lag" decreases your FPS to a low value whenever an admin uses :lag on you (recommended as it stops them from spotting your fake FPS)
+
+- "Chaos Ping" constantly changes your ping to be a random value between your chosen minimum and maximum values (default: 1, 2^62)
+
+- You can additionally set your ping to "inf", "nan" and numbers like "1e5" or "1e30"
+]])
+
 --// Notfication function \\--
-local function notify(notification: table)
+local function notify(notification: {title: string, text: string, icon: string})
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = notification.title,
         Text = notification.text,
@@ -37,6 +50,8 @@ else
 --// Adonis bypass \\--
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua"))()
 end
+
+notify{title = "Read console for info about the script", text = "(Press F9)", icon = ""}
 
 --// FPS & ping settings \\--
 local settings = {
@@ -78,6 +93,10 @@ local settings = {
 
 --// Fetch FPS or ping value \\--
 local function getValue(valueType: string): number
+    if autoLagOption and autoLag and valueType == "fps" then
+        return 4 + math.random(1, 3)
+    end
+
     if settings[valueType].placeholder then 
         return nil
     end
@@ -147,6 +166,10 @@ local function loadFPSUI()
         if bool then
             localPlayer.Character.Humanoid.Health = 0
         end
+    end)
+
+    a:Toggle("Auto Lag (Recommended)", function(bool)
+        settings.fps.autoLagOption = bool
     end)
     
     a:Box("FPS", "number", function(value)
@@ -309,3 +332,21 @@ task.spawn(function()
         end
     end
 end)
+
+for i,v in pairs(getgc()) do 
+    if type(v) == "function" then
+        local info = debug.getinfo(v) 
+
+        if info.source:find('=.Core.Functions') then
+            if info.name == "SetFPS" then
+                hookfunction(v, function()
+                    autoLag = true
+                end)
+            elseif info.name == "RestoreFPS" then
+                hookfunction(v, function()
+                    autoLag = false
+                end)
+            end
+        end
+    end
+end
