@@ -168,7 +168,7 @@ local function loadFPSUI()
         end
     end)
 
-    a:Toggle("Auto Lag (Recommended)", function(bool)
+    a:Toggle("Auto Lag (recommended)", function(bool)
         settings.fps.autoLagOption = bool
     end)
     
