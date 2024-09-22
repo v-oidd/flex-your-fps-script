@@ -25,13 +25,16 @@ local autoLag = false
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local w = library:CreateWindow("Flexer")
 
+--// Print extra info to console \\--
 print([[
 
 - "Realistic FPS/Ping Range" is the amount your FPS/Ping will flunctuate below the target FPS (when Realistic FPS/Ping is turned on)
 
 - "Auto Lag" decreases your FPS and ping to a low value whenever an admin uses :lag on you (recommended as it stops them from spotting you)
 
-- "Chaos Ping" constantly changes your ping to be a random value between your chosen minimum and maximum values (default: 1, 2^62)
+- "Glitchy Ping" constantly changes your ping so that it always changes color, creating a glitch effect
+
+- "Chaos Ping" constantly changes your ping to be a random value between your chosen minimum and maximum values (default: 1, 2^55)
 
 - You can additionally set your ping to "inf", "nan" and numbers like "1e5" or "1e30"
 ]])
