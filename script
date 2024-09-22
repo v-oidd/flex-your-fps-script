@@ -160,13 +160,13 @@ end
 local function loadFPSUI()
     local a = w:CreateFolder("FPS Modifier")
     local b = w:CreateFolder("FPS Copier")
+
+    a:Toggle("Constant FPS", function(bool)
+        settings.fps.constant = bool
+    end)
     
     a:Toggle("Realistic FPS", function(bool)
         settings.fps.realistic = bool
-    end)
-    
-    a:Toggle("Constant FPS", function(bool)
-        settings.fps.constant = bool
     end)
     
     a:Toggle("0 FPS (will reset you)", function(bool)
@@ -203,12 +203,12 @@ local function loadPingUI()
     local d = w:CreateFolder("Ping Copier")
     local e = w:CreateFolder("Ping Chaos")
     
-    c:Toggle("Realistic Ping", function(bool)
-        settings.ping.realistic = bool
-    end)
-    
     c:Toggle("Constant Ping", function(bool)
         settings.ping.constant = bool
+    end)
+
+    c:Toggle("Realistic Ping", function(bool)
+        settings.ping.realistic = bool
     end)
     
     c:Toggle("Placeholder Ping (will reset you)", function(bool)
