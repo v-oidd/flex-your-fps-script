@@ -95,7 +95,7 @@ local settings = {
 local function getValue(valueType: string): number
     if autoLagOption and autoLag then
         if valueType == "fps"
-            return math.random(4, 11)
+            return math.random(4, 11) then
         else 
             return math.random(208, 317)
         end
