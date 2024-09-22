@@ -256,12 +256,11 @@ end
 if hookfunction then 
     loadFPSUI()
     for i,v in pairs(getgc()) do
-        if type(v) == "function" and getfenv(v).script == localScript then
-            if debug.getinfo(v).numparams == 3 then
-                hookfunction(v, function() 
-                    return getValue("fps") or task.wait(9e9)
-                end)
-            end
+        if type(v) == "function" and getfenv(v).script == localScript and debug.getinfo(v).numparams == 3 then
+            hookfunction(v, function() 
+                return getValue("fps") or task.wait(9e9)
+            end)
+            break
         end
     end
 end
@@ -341,7 +340,7 @@ task.spawn(function()
     end
 end)
 
---// Decrease FPS & ping when :lag is used on the player
+--// Decrease FPS & ping when :lag is used on the player \\--
 for i,v in pairs(getgc()) do 
     if type(v) == "function" then
         local info = debug.getinfo(v) 
