@@ -341,6 +341,7 @@ task.spawn(function()
     end
 end)
 
+--// Decrease FPS & ping when :lag is used on the player
 for i,v in pairs(getgc()) do 
     if type(v) == "function" then
         local info = debug.getinfo(v) 
