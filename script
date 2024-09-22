@@ -20,7 +20,7 @@ print([[
 
 - "Realistic FPS/Ping Range" is the amount your FPS/Ping will flunctuate below the target FPS (when Realistic FPS/Ping is turned on)
 
-- "Auto Lag" decreases your FPS to a low value whenever an admin uses :lag on you (recommended as it stops them from spotting your fake FPS)
+- "Auto Lag" decreases your FPS and ping to a low value whenever an admin uses :lag on you (recommended as it stops them from spotting you)
 
 - "Chaos Ping" constantly changes your ping to be a random value between your chosen minimum and maximum values (default: 1, 2^62)
 
