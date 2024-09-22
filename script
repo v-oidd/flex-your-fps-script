@@ -149,7 +149,7 @@ local function parseNumber(value: string, valueType: string?): number
     
     if table.find({"inf", "infinite", "infinity"}, value) then 
         return settings.ping.chaos.on and 2^62 or math.huge
-    elseif tonumber(value) then 
+    elseif tonumber(value) and value ~= "nan" then 
         return tonumber(value) >= 1 and tonumber(value) or 1
     end
     
