@@ -1,3 +1,10 @@
+--// Check if script is already running \\--
+if FLEXER_LOADED then
+    return 
+end
+
+getgenv().FLEXER_LOADED = true
+
 --// Variables \\--
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -7,6 +14,8 @@ local pingRemote = ReplicatedStorage:WaitForChild("PingRem")
 local obbyRemote = ReplicatedStorage:WaitForChild("Obby")
 local homeRemote = ReplicatedStorage:WaitForChild("Home")
 local obbies = {"Easy", "Medium", "Hard", "Extreme", "Terrifying"}
+local pingGlitchValues = {1, 21, 51, 101, 201}
+local currentGlitchIndex = 1
 local random = Random.new()
 local fpsDropdown
 local pingDropdown
@@ -65,8 +74,11 @@ local settings = {
         placeholder = false,
         min = 1,
         max = 3500,
+        glitch = false,
         chaos = {
             on = false,
+            absMin = 0,
+            absMax = 0,
             min = 0,
             max = 0,
             noDecimals = false
@@ -82,10 +94,13 @@ local settings = {
         placeholder = false,
         min = 1,
         max = math.huge,
+        glitch = false,
         chaos = {
             on = false,
+            absMin = 1,
+            absMax = 2^55,
             min = 1,
-            max = 2^62,
+            max = 2^55,
             noDecimals = false
         }
     }
@@ -102,7 +117,7 @@ local function getValue(valueType: string): number
     end
 
     if settings[valueType].placeholder then 
-        return nil
+        return -1
     end
     
     if not localPlayer.Character then 
@@ -117,7 +132,7 @@ local function getValue(valueType: string): number
     end
     currentValue = currentValue or 1
     
-    if settings[valueType].chaos.on then 
+    if settings[valueType].chaos.on or settings[valueType].glitch then 
         return currentValue
     end
     
@@ -139,19 +154,17 @@ end
 
 --// Parse string to number \\--
 local function parseNumber(value: string, valueType: string?): number
-    if value == "" then 
-        if valueType == "chaosMin" then 
-            return 1 
-        elseif valueType == "chaosMax" then 
-            return 2^62 
-        end 
-    end 
-    
     if table.find({"inf", "infinite", "infinity"}, value) then 
-        return settings.ping.chaos.on and 2^62 or math.huge
-    elseif tonumber(value) and value ~= "nan" then 
+        return settings.ping.chaos.on and settings.ping.chaos.absMax or math.huge
+    elseif tonumber(value) then 
         return tonumber(value) >= 1 and tonumber(value) or 1
     end
+
+    if valueType == "chaosMin" then 
+        return settings.ping.chaos.absMin
+    elseif valueType == "chaosMax" then 
+        return settings.ping.chaos.absMax
+    end 
     
     return 0/0
 end
@@ -160,13 +173,13 @@ end
 local function loadFPSUI()
     local a = w:CreateFolder("FPS Modifier")
     local b = w:CreateFolder("FPS Copier")
-
-    a:Toggle("Constant FPS", function(bool)
-        settings.fps.constant = bool
-    end)
     
     a:Toggle("Realistic FPS", function(bool)
         settings.fps.realistic = bool
+    end)
+    
+    a:Toggle("Constant FPS", function(bool)
+        settings.fps.constant = bool
     end)
     
     a:Toggle("0 FPS (will reset you)", function(bool)
@@ -203,20 +216,23 @@ local function loadPingUI()
     local d = w:CreateFolder("Ping Copier")
     local e = w:CreateFolder("Ping Chaos")
     
-    c:Toggle("Constant Ping", function(bool)
-        settings.ping.constant = bool
-    end)
-
     c:Toggle("Realistic Ping", function(bool)
         settings.ping.realistic = bool
     end)
     
+    c:Toggle("Constant Ping", function(bool)
+        settings.ping.constant = bool
+    end)
+    
     c:Toggle("Placeholder Ping (will reset you)", function(bool)
         settings.ping.placeholder = bool
-        fakePing = true
         if bool then
             localPlayer.Character.Humanoid.Health = 0 
         end
+    end)
+    
+    c:Toggle("Glitchy Ping", function(bool)
+        settings.ping.glitch = bool 
     end)
     
     c:Box("Ping", "string", function(value)
@@ -258,7 +274,11 @@ if hookfunction then
     for i,v in pairs(getgc()) do
         if type(v) == "function" and getfenv(v).script == localScript and debug.getinfo(v).numparams == 3 then
             hookfunction(v, function() 
-                return getValue("fps") or task.wait(9e9)
+                local fpsValue = getValue("fps")
+                if fpsValue then 
+                    return fpsValue 
+                end
+                task.wait(9e9)
             end)
             break
         end
@@ -272,7 +292,12 @@ if hookmetamethod then
     namecall = hookmetamethod(game, "__namecall", function(self, ...)
         local method = getnamecallmethod()
         if not checkcaller() and method == "FireServer" and self == pingRemote then
-            return namecall(self, getValue("ping") or task.wait(9e9))
+            local pingValue = getValue("ping")
+            if pingValue ~= -1 then 
+                return namecall(self, pingValue)
+            end
+            fakePing = true
+            return namecall(self, task.wait(9e9))
         end
         return namecall(self, ...)
     end)
@@ -325,6 +350,12 @@ task.spawn(function()
             elseif settings.ping.copy then
                 if workspace:FindFirstChild(settings.ping.copyTarget) and workspace[settings.ping.copyTarget]:FindFirstChild("Head") then
                     pingRemote:FireServer(getValue("ping"))
+                end
+            elseif settings.ping.glitch then 
+                pingRemote:FireServer(pingGlitchValues[currentGlitchIndex])
+                currentGlitchIndex += 1 
+                if currentGlitchIndex == #pingGlitchValues + 1 then 
+                    currentGlitchIndex = 1 
                 end
             end 
         end
