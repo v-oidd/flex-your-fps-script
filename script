@@ -112,11 +112,7 @@ local settings = {
 --// Fetch FPS or ping value \\--
 local function getValue(valueType: string): number
     if autoLagOption and autoLag then
-        if valueType == "fps" then
-            return math.random(4, 11)
-        else 
-            return math.random(208, 317)
-        end
+         return valueType == "fps" and math.random(4, 11) or math.random(208, 317)
     end
 
     if settings[valueType].placeholder then 
