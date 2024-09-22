@@ -125,9 +125,9 @@ local function getValue(valueType: string): number
     
     local currentValue
     if valueType == "fps" then 
-        currentValue = tonumber(localPlayer.Character.Head.fpsGui.FPS.Text:sub(6, -1))
+        currentValue = tonumber(localPlayer.Character.Head.fpsGui.FPS.Text:sub(6))
     else
-        currentValue = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6, -1))
+        currentValue = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6))
     end
     currentValue = currentValue or 1
     
