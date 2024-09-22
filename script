@@ -173,7 +173,7 @@ local function loadFPSUI()
     end)
 
     a:Toggle("Auto Lag (recommended)", function(bool)
-        settings.fps.autoLagOption = bool
+        autoLagOption = bool
     end)
     
     a:Box("FPS", "number", function(value)
