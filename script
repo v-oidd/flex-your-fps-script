@@ -1,5 +1,5 @@
 --// Check if script is already running \\--
-if FLEXER_LOADED then
+if FLEXER_LOADED or game.PlaceId ~= 18667984660 then
     return 
 end
 
