@@ -24,6 +24,10 @@ local w = library:CreateWindow("Flexer")
 
 --// Print extra info to console \\--
 print([[
+    
+- Minimum FPS = 1 (or 0 through the 0 FPS feature), Maximum FPS = 4500
+
+- Minimum Ping = 1, Maximum Ping = inf
 
 - "Realistic FPS/Ping Range" is the amount your FPS/Ping will flunctuate below the target FPS (when Realistic FPS/Ping is turned on)
 
