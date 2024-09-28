@@ -378,9 +378,8 @@ if hookfunction then
     
             if info.source:find('=.Core.Functions') then
                 if info.name == "SetFPS" then
-                    hookfunction(v, function(...)
-                        local args = {...}
-                        setfpscap(args[1])
+                    hookfunction(v, function()
+                        setfpscap(5.6)
                         autoLag = true
                     end)
                 elseif info.name == "RestoreFPS" then
