@@ -114,14 +114,23 @@ local settings = {
 local autoLag = {
     optionEnabled = false,
     enabled = false,
-    fps = 10,
+    fps = {
+        old = 60, 
+        new = 60
+    },
+    ping = 250,
     pingEnabled = false
 }
 
 --// Fetch FPS or ping value \\--
 local function getValue(valueType: string): number
-    if autoLag.optionEnabled and autoLag.enabled and (autoLag.pingEnabled or valueType ~= "ping") then
-         return math.random(math.ceil(autoLag[valueType] * (2/3)), autoLag[valueType])
+    if autoLag.optionEnabled and autoLag.enabled then
+        if valueType == "fps" then
+            local newFPS = math.random(math.max(autoLag.fps.old - 122, 1), autoLag.fps.old)
+            return math.min(newFPS, autoLag.fps.new) - math.random(0, 1)
+        else 
+            return autoLag.ping
+        end
     end
 
     if settings[valueType].placeholder then 
@@ -388,11 +397,10 @@ if hookfunction then
                 if info.name == "SetFPS" then
                     hookfunction(v, function(...)
                         local args = {...}
-                        local newFPS = args[1]
-                        
+                        autoLag.fps.old = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6))
+                        autoLag.fps.new = args[1]
                         setfpscap(newFPS)
                         autoLag.enabled = true
-                        autoLag.fps = newFPS
                         autoLag.pingEnabled = newFPS <= 30 
                     end)
                 elseif info.name == "RestoreFPS" then
