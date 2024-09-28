@@ -372,21 +372,23 @@ task.spawn(function()
 end)
 
 --// Decrease FPS & ping when :lag is used on the player \\--
-for i,v in pairs(getgc()) do 
-    if type(v) == "function" then
-        local info = debug.getinfo(v) 
-
-        if info.source:find('=.Core.Functions') then
-            if info.name == "SetFPS" then
-                hookfunction(v, function()
-                    setfpscap(5.6)
-                    autoLag = true
-                end)
-            elseif info.name == "RestoreFPS" then
-                hookfunction(v, function()
-                    setfpscap(9999)
-                    autoLag = false
-                end)
+if hookfunction then 
+    for i,v in pairs(getgc()) do 
+        if type(v) == "function" then
+            local info = debug.getinfo(v) 
+    
+            if info.source:find('=.Core.Functions') then
+                if info.name == "SetFPS" then
+                    hookfunction(v, function()
+                        setfpscap(5.6)
+                        autoLag = true
+                    end)
+                elseif info.name == "RestoreFPS" then
+                    hookfunction(v, function()
+                        setfpscap(9999)
+                        autoLag = false
+                    end)
+                end
             end
         end
     end
