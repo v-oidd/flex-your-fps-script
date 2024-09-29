@@ -118,7 +118,7 @@ local autoLag = {
         old = 60, 
         new = 60
     },
-    ping = 250,
+    ping = 243,
     pingEnabled = false
 }
 
@@ -128,8 +128,8 @@ local function getValue(valueType: string): number
         if valueType == "fps" then
             local newFPS = math.random(math.max(autoLag.fps.old - 122, 1), autoLag.fps.old)
             return math.min(newFPS, autoLag.fps.new) - math.random(0, 1)
-        else 
-            return autoLag.ping
+        elseif autoLag.pingEnabled then
+            return math.random(math.ceil(autoLag.ping * (6/7)), autoLag.ping)
         end
     end
 
