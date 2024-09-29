@@ -401,7 +401,7 @@ if hookfunction then
                         autoLag.fps.new = args[1]
                         setfpscap(autoLag.fps.new)
                         autoLag.enabled = true
-                        autoLag.pingEnabled = newFPS <= 30 
+                        autoLag.pingEnabled = autoLag.fps.new <= 30 
                     end)
                 elseif info.name == "RestoreFPS" then
                     hookfunction(v, function()
