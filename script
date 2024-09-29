@@ -126,6 +126,9 @@ local autoLag = {
 local function getValue(valueType: string): number
     if autoLag.optionEnabled and autoLag.enabled then
         if valueType == "fps" then
+            if autoLag.fps.new == 5.6 then 
+                return 5 - math.random(0, 1)
+            end
             local newFPS = math.random(math.max(autoLag.fps.old - 122, 1), autoLag.fps.old)
             return math.min(newFPS, autoLag.fps.new) - math.random(0, 1)
         elseif autoLag.pingEnabled then
