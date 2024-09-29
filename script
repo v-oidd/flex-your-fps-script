@@ -399,7 +399,7 @@ if hookfunction then
                         local args = {...}
                         autoLag.fps.old = tonumber(localPlayer.Character.Head.fpsGui.Ping.Text:sub(6))
                         autoLag.fps.new = args[1]
-                        setfpscap(newFPS)
+                        setfpscap(autoLag.fps.new)
                         autoLag.enabled = true
                         autoLag.pingEnabled = newFPS <= 30 
                     end)
