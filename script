@@ -23,7 +23,7 @@ local INT_MAX = 2147483647
 local OBBY_LIST = {"Easy", "Medium", "Hard", "Extreme", "Terrifying"}
 local GLITCH_VALUES = {1, 21, 51, 101, 201}
 
---// Print extra info to console \\--
+--// Print extra info to the console \\--
 print([[
     
 - Minimum FPS = 1 (or 0 by toggling 0 FPS), Maximum FPS = 4500
