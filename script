@@ -10,28 +10,27 @@ local localScript = localPlayer.PlayerScripts.System.Handler
 local pingRemote = ReplicatedStorage:WaitForChild("PingRem")
 local obbyRemote = ReplicatedStorage:WaitForChild("Obby")
 local homeRemote = ReplicatedStorage:WaitForChild("Home")
-local obbies = {"Easy", "Medium", "Hard", "Extreme", "Terrifying"}
-local pingGlitchValues = {1, 21, 51, 101, 201}
 local currentGlitchIndex = 1
 local random = Random.new()
 local fpsDropdown
 local pingDropdown
 local fakePing = false
-local autoLagOption = false
-local autoLag = false
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 local w = library:CreateWindow("Flexer")
+
+--// Constants \\--
+local INT_MAX = 2147483647
+local OBBY_LIST = {"Easy", "Medium", "Hard", "Extreme", "Terrifying"}
+local GLITCH_VALUES = {1, 21, 51, 101, 201}
 
 --// Print extra info to console \\--
 print([[
     
-- Minimum FPS = 1 (or 0 through the 0 FPS feature), Maximum FPS = 4500
+- Minimum FPS = 1 (or 0 by toggling 0 FPS), Maximum FPS = 4500
 
 - Minimum Ping = 1, Maximum Ping = inf
 
 - "Realistic FPS/Ping Range" is the amount your FPS/Ping will flunctuate below the target FPS (when Realistic FPS/Ping is turned on)
-
-- "Auto Lag" decreases your FPS and ping to a low value whenever an admin uses :lag on you (recommended as it stops them from spotting you)
 
 - "Glitchy Ping" constantly changes your ping so that it always changes color, creating a glitch effect
 
@@ -64,7 +63,7 @@ else
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua"))()
 end
 
-notify{title = "Read console for info about the script", text = "(Press F9)", icon = ""}
+notify{title = "Open console for extra info", text = "(Press F9)", icon = ""}
 
 --// FPS & ping settings \\--
 local settings = {
@@ -89,7 +88,7 @@ local settings = {
         }
     },
     ping = {
-        value = 60,
+        value = 40,
         realisticRange = 10,
         realistic = false,
         constant = false,
@@ -112,10 +111,6 @@ local settings = {
 
 --// Fetch FPS or ping value \\--
 local function getValue(valueType: string): number
-    if autoLagOption and autoLag then
-         return valueType == "fps" and math.random(4, 11) or math.random(208, 317)
-    end
-
     if settings[valueType].placeholder then 
         return -1
     end
@@ -145,7 +140,7 @@ local function getValue(valueType: string): number
     elseif settings[valueType].constant then 
         return math.clamp(settings[valueType].value, settings[valueType].min, settings[valueType].max)
     elseif settings[valueType].realistic then 
-        local randomValue = math.random(0, math.abs(math.min(settings[valueType].realisticRange, 2147483647)))
+        local randomValue = math.random(0, math.abs(math.min(settings[valueType].realisticRange, INT_MAX)))
         return math.clamp(settings[valueType].value - randomValue, settings[valueType].min, settings[valueType].max)
     end
 
@@ -187,10 +182,6 @@ local function loadFPSUI()
         if bool then
             localPlayer.Character.Humanoid.Health = 0
         end
-    end)
-
-    a:Toggle("Auto Lag (recommended)", function(bool)
-        autoLagOption = bool
     end)
     
     a:Box("FPS", "number", function(value)
@@ -306,7 +297,7 @@ end
 local f = w:CreateFolder("Obby Badges")
 
 f:Button("Get Badges", function()
-    for i,v in pairs(obbies) do 
+    for i,v in pairs(OBBY_LIST) do 
         obbyRemote:FireServer(v)
         firetouchinterest(workspace.Obbies[v]:WaitForChild("badge"), localPlayer.Character.HumanoidRootPart, 0)
     end
@@ -351,9 +342,9 @@ task.spawn(function()
                     pingRemote:FireServer(getValue("ping"))
                 end
             elseif settings.ping.glitch then 
-                pingRemote:FireServer(pingGlitchValues[currentGlitchIndex])
+                pingRemote:FireServer(GLITCH_VALUES[currentGlitchIndex])
                 currentGlitchIndex += 1 
-                if currentGlitchIndex == #pingGlitchValues + 1 then 
+                if currentGlitchIndex == #GLITCH_VALUES + 1 then 
                     currentGlitchIndex = 1 
                 end
             end 
@@ -369,26 +360,3 @@ task.spawn(function()
         end
     end
 end)
-
---// Decrease FPS & ping when :lag is used on the player \\--
-if hookfunction then 
-    for i,v in pairs(getgc()) do 
-        if type(v) == "function" then
-            local info = debug.getinfo(v) 
-    
-            if info.source:find('=.Core.Functions') then
-                if info.name == "SetFPS" then
-                    hookfunction(v, function()
-                        setfpscap(5.6)
-                        autoLag = true
-                    end)
-                elseif info.name == "RestoreFPS" then
-                    hookfunction(v, function()
-                        setfpscap(9999)
-                        autoLag = false
-                    end)
-                end
-            end
-        end
-    end
-end
